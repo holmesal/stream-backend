@@ -53,4 +53,4 @@ app.post '/stream/:stream/post', (req, res) =>
 
 	res.end()
 
-app.listen 3000
+app.listen 80

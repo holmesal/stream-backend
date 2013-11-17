@@ -37,6 +37,9 @@ app.configure ->
 	app.use express.bodyParser()
 
 
+app.get '/', (req, res) ->
+	res.end 'Up and running cap\'n!'
+
 app.get '/stream/:stream', (req, res) ->
 	console.log 'got a request for a stream!'
 	res.json fakedb

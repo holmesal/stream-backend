@@ -11,7 +11,7 @@ db.on 'error', console.error.bind(console, 'connection error')
 db.once 'open', ->
 	console.log 'connected successfully to mongodb'
 	# Start listening
-	app.listen 80
+	app.listen 3000
 
 
 allowCrossDomain = (req, res, next) ->
@@ -25,23 +25,6 @@ allowCrossDomain = (req, res, next) ->
 		res.send 200
 	else
 		next()
-
-# Spoof the database. Store shit on process. ugly as shit.
-# process.env['fakedb'] = {}
-# fakedb = 
-# 	id: 1234
-# 	name: 'The stream meta-stream'
-# 	slug: 'meta-stream'
-# 	posts: [
-# 		{
-# 			content: 'I want someplace to microblog while I work, so I can record things without going off on tangents, and come back to them later. 9:10PM on Nov 16'
-# 			timestamp: Date.now()
-# 		}
-# 		{
-# 			content: 'I also want a record of all of the problems I faced and the decisions I made.'
-# 			timestamp: Date.now()
-# 		}
-# 	]
 
 app.configure ->
 	app.use allowCrossDomain
@@ -167,9 +150,9 @@ app.put '/stream/:streamid', (req, res) ->
 
 
 
-app.post '/stream/:streamid/post', (req, res) ->
+app.post '/post', (req, res) ->
 	Models.Stream.findOne
-		'_id': req.params.streamid
+		'_id': req.body.streamId
 	, (err, stream) ->
 		post = new Models.Post req.body.post
 		post.stream = stream._id
@@ -195,3 +178,13 @@ app.put '/post/:postid', (req, res) ->
 			res.json 500, {error: err}
 		else
 			res.json post
+
+app.delete '/post/:postid', (req, res) ->
+	Models.Post.remove
+		'_id': req.params.postid
+	, (err) ->
+		if err
+			console.error err
+			res.json 500, {error: err}
+		else
+			res.json 200
